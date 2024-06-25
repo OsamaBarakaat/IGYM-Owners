@@ -1,0 +1,234 @@
+.Home {
+    min-height: 100vh;
+    color: var(--main-text-color);
+}
+
+
+.slider-container {
+    margin: auto;
+    max-width: 1000px;
+    padding: 1rem;
+}
+
+.slider-container div {
+    text-align: center;
+}
+
+@media screen and (max-width: 1300px) {
+    .slider-container {
+        max-width: 900px;
+
+    }
+}
+
+@media screen and (max-width: 1250px) {
+    .slider-container {
+        max-width: 850px;
+
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .slider-container {
+        max-width: 800px;
+
+    }
+}
+
+@media screen and (max-width: 1150px) {
+    .slider-container {
+        max-width: 750px;
+
+    }
+}
+
+
+@media screen and (max-width: 1120px) {
+    .slider-container {
+        max-width: 700px;
+
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .slider-container {
+        max-width: 650px;
+
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .slider-container {
+        max-width: 600px;
+
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .slider-container {
+        max-width: 550px;
+
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .slider-container {
+        max-width: 525px;
+
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .slider-container {
+        max-width: 500px;
+
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .slider-container {
+        max-width: 450px;
+
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .slider-container {
+        max-width: 400px;
+
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .slider-container {
+        max-width: 350px;
+
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .slider-container {
+        max-width: 300px;
+
+    }
+}
+
+
+.main-cards {
+    display: flex;
+    justify-content: space-around;
+    margin: 1rem auto;
+}
+
+.defaultCard {
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem auto;
+    transition: all 0.5s ease;
+    width: calc(100%/4 - 2rem);
+    opacity: 0.8;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.defaultCard svg {
+    width: 25px;
+    height: 25px;
+
+}
+
+.defaultCard div:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background-color: #ddf8c3;
+    color: var(--main-color);
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.defaultCard div:last-child {
+    flex-grow: 1;
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+@media screen and (max-width: 1300px) {
+    .main-cards {
+        flex-wrap: wrap;
+    }
+
+    .defaultCard {
+        width: calc(100%/3 - 2rem);
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .defaultCard {
+        width: calc(100%/2 - 2rem);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .defaultCard {
+        width: calc(100% - 2rem);
+    }
+}
+
+.bigChart {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
+    margin: 1rem;
+
+}
+
+.twoSmallChart {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 1rem auto;
+}
+
+.twoSmallChart>div {
+    width: calc(100%/2 - 2rem);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--main-background-color);
+    color: var(--main-text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+@media screen and (max-width:768px) {
+    .twoSmallChart {
+        flex-direction: column;
+    }
+
+    .twoSmallChart div {
+        width: calc(100% - 2rem);
+        margin: 1rem 0;
+    }
+
+}
+
+.bigChart {
+    max-height: 55vh;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
