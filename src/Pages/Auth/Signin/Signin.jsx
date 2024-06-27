@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 const Signin = () => {
   const [showEye, setShowEye] = useState(false);
   const [typeOfPass, setTypeOfPass] = useState("password");
+  const [loadingInput, setLoadingInput] = useState(false);
   const navigate = useNavigate();
   const showPassword = () => {
     setShowEye(true);
@@ -34,22 +35,22 @@ const Signin = () => {
         password: values.password,
       });
       console.log(res.data);
-      dispatch(setUser(res.data.data.user));
-      localStorage.setItem("accessToken", res.data.data.accessToken);
-      localStorage.setItem("jwt", res.data.data.refreshToken);
+      dispatch(
+        setUser({ data: res.data.data.user, token: res.data.data.accessToken })
+      );
+      setLoadingInput(false);
       toast.success("user signed in successfully");
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      navigate("/");
     } catch (error) {
       console.log(error);
-      if (error.message === "timeout of 10000ms exceeded") {
+      if (error.message === "timeout of 90000ms exceeded") {
         toast.error("Network Error");
       } else if (error.response.data.message) {
         toast.error(error.response.data.message);
       } else {
         toast.error("Something went wrong");
       }
+      setLoadingInput(false);
     }
   };
   const {

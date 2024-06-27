@@ -28,9 +28,7 @@ function App() {
     <Router>
       <div className="App" data-theme={theme}>
         <Routes>
-          <Route path="/" element={<RequireAuth>
-            <Layout />
-          </RequireAuth>} >
+          <Route path="/" element={<Layout/>} >
             <Route index element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
