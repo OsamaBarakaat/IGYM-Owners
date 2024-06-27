@@ -29,7 +29,7 @@ const Profile = () => {
 
   const navigate = useNavigate();
   const { data: userData } = useSelector((state) => state.user);
-  console.log(userData);
+  console.log("profile",userData);
   const dispatch = useDispatch();
   const handleUpload = () => {
     if (userImage) {
@@ -306,7 +306,7 @@ const Profile = () => {
                         <Form.Control
                           type="text"
                           placeholder="name"
-                          defaultValue={userData?.name}
+                          value={userData?.name}
                           readOnly
                         />
                       </FloatingLabel>
@@ -339,7 +339,7 @@ const Profile = () => {
                             <Form.Control
                               type="number"
                               placeholder="phone number"
-                              defaultValue={userData.phones[0]}
+                              value={userData.phones[0]}
                               readOnly
                             />
                           )}
