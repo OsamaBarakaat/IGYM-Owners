@@ -29,7 +29,7 @@ const Profile = () => {
 
   const navigate = useNavigate();
   const { data: userData } = useSelector((state) => state.user);
-  console.log("profile",userData);
+  console.log("profile", userData);
   const dispatch = useDispatch();
   const handleUpload = () => {
     if (userImage) {
@@ -52,7 +52,7 @@ const Profile = () => {
       dispatch(reSetUser());
       navigate("/signin");
     } catch (error) {
-      toast.error("Something went wrong");
+      navigate("/signin");
       console.log(error);
     }
   };
@@ -142,7 +142,7 @@ const Profile = () => {
         });
         console.log(res.data.data);
         toast.success("Profile updated successfully");
-        dispatch(setUser({data:res.data.data}));
+        dispatch(setUser({ data: res.data.data }));
       } catch (error) {
         console.log(error);
         toast.error("Something went wrong");
