@@ -28,13 +28,13 @@ function App() {
     <Router>
       <div className="App" data-theme={theme}>
         <Routes>
-          <Route path="/" element={<Layout/>} >
+          <Route path="/" element={<Layout />} >
             <Route index element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/plans" element={<Plans />} />
             <Route path="/gyms" element={<Gyms />} />
-            <Route path="/gyminfo" element={<GymInfo />} />
+            <Route path="/gyminfo/:id" element={<GymInfo />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/pushnotifications" element={<PushNotifications />} />
           </Route>

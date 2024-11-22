@@ -1,4 +1,4 @@
-import React, { useState, Component } from "react";
+import React, { useState, Component, useEffect } from "react";
 import "./GymInfo.css";
 import airGym from "../../../assetss/default/airGym.jpg";
 import equipment from "../../../assetss/default/equipment (6).jpg";
@@ -11,8 +11,11 @@ import { Controller } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Modal } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { privateAxiosInstance } from "../../../api/axios";
 
 const GymInfo = () => {
+  const { id } = useParams();
   const [currentPage, setCurrentPage] = useState("info");
   const showInfo = () => setCurrentPage("info");
   const showTrainees = () => setCurrentPage("trainees");
@@ -32,6 +35,37 @@ const GymInfo = () => {
     equipment,
     airGym,
   ]; // Add your image URLs here
+  const [theGym, setTheGym] = useState(null);
+  const getTheGym = async () => {
+    try {
+      const res = await privateAxiosInstance.get(`/gyms/${id}`);
+      console.log(res?.data?.data);
+      setTheGym(res?.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getTheGym();
+  }, [id]);
+  const workingTimes = theGym?.branchInfo?.workingTimes;
+
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+  const formatTime = (time) => {
+    if (!time) return "Closed";
+    const [hour, minute] = time.split(":").map(Number);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+  };
 
   const handleImageClick = (image) => {
     setExpandedImage(image);
@@ -78,17 +112,21 @@ const GymInfo = () => {
         </div>
         <div className="logoAndInfo">
           <div className="logo">
-            <img src={airGym} alt="gym" />
+            <img src={theGym?.logo || airGym} alt="gym" />
           </div>
           <div className="info text-center mt-1">
-            <h2>Air gym</h2>
+            <h2>{theGym?.name}</h2>
             <p>
               Owner :{" "}
-              <span className="warning cursor-pointer">Osama Barakat</span>
+              <span className="warning cursor-pointer">
+                {theGym?.owner?.name}
+              </span>
             </p>
             <p>
               Current plan :{" "}
-              <span className="main-color cursor-pointer">Gold</span>
+              <span className="main-color cursor-pointer">
+                {theGym?.ownerPlan?.name}
+              </span>
             </p>
           </div>
         </div>
@@ -184,7 +222,7 @@ const GymInfo = () => {
               <h3>Gym Info</h3>
 
               <p name="info" className=" m-auto pOfGymInfo rounded-2">
-                {valueOfText}
+                {theGym?.description}
               </p>
             </div>
             <div className="locationAndPlans">
@@ -205,14 +243,11 @@ const GymInfo = () => {
                 <h3>Plans</h3>
                 <div>
                   <div>
-                    <span className="price">2000</span> / month
-                    <span className="planeName">Gold</span>
+                    <span className="price">{theGym?.ownerPlan?.cost}</span> /
+                    month
                   </div>
                   <div className="planDesc">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Nulla suscipit sequi eos voluptas voluptatum autem esse in
-                    repellendus facere magni! Reprehenderit, recusandae totam
-                    nisi blanditiis corporis explicabo! Ipsam, iusto aspernatur.
+                    {theGym?.ownerPlan?.description}
                   </div>
                 </div>
               </div>
@@ -231,55 +266,32 @@ const GymInfo = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td data-label="Day">Monday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Tuesday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Wensday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Thursday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Friday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Saturday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
-                    <tr>
-                      <td data-label="Day">Sunday</td>
-                      <td data-label="Opening">9:00 AM</td>
-                      <td data-label="Closing">9:00 PM</td>
-                      <td data-label="Peak hours">9:00 AM</td>
-                      <td data-label="Female hours">9:00 PM</td>
-                    </tr>
+                    {days.map((day) => {
+                      const dayInfo = workingTimes?.[day];
+                      return (
+                        <tr key={day}>
+                          <td data-label="Day">
+                            {day.charAt(0).toUpperCase() + day.slice(1)}
+                          </td>
+                          <td data-label="Opening">
+                            {dayInfo ? formatTime(dayInfo.opening) : "Closed"}
+                          </td>
+                          <td data-label="Closing">
+                            {dayInfo ? formatTime(dayInfo.closing) : "Closed"}
+                          </td>
+                          <td data-label="Peak hours">
+                            {dayInfo && dayInfo.peak
+                              ? formatTime(dayInfo.peak)
+                              : "-"}
+                          </td>
+                          <td data-label="Female hours">
+                            {dayInfo && dayInfo.female
+                              ? formatTime(dayInfo.female)
+                              : "-"}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -319,7 +331,7 @@ const GymInfo = () => {
                     },
                   }}
                 >
-                  {images.map((image, index) => (
+                  {theGym?.branchInfo?.images.map((image, index) => (
                     <SwiperSlide key={index}>
                       <div
                         className="bigImageContainer"
