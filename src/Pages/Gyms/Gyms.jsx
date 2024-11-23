@@ -61,6 +61,7 @@ const Gyms = () => {
       const { data } = await privateAxiosInstance.post(`gyms`, {
         email: values.email,
         planId: values.planName,
+        clientUrl: "https://igym.vercel.app/setpass/",
       });
       setInviteLink(data.data.inviteLink);
       actions.resetForm();
