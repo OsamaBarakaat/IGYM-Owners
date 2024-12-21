@@ -13,6 +13,10 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { privateAxiosInstance } from "../../../api/axios";
+import Trainees from "./Trainees";
+import Trainers from "./Trainers";
+import Plans from "./Plans";
+import Classes from "./Classes";
 
 const GymInfo = () => {
   const { id } = useParams();
@@ -365,10 +369,26 @@ const GymInfo = () => {
             </div>
           </div>
         )}
-        {currentPage === "trainees" && <div>Trainees</div>}
-        {currentPage === "trainers" && <div>Trainers</div>}
-        {currentPage === "plans" && <div>Plans</div>}
-        {currentPage === "classes" && <div>Classes</div>}
+        {currentPage === "trainees" && (
+          <div>
+            <Trainees id={id} />
+          </div>
+        )}
+        {currentPage === "trainers" && (
+          <div>
+            <Trainers id={id} />
+          </div>
+        )}
+        {currentPage === "plans" && (
+          <div>
+            <Plans id={id} />
+          </div>
+        )}
+        {currentPage === "classes" && (
+          <div>
+            <Classes id={id} />
+          </div>
+        )}
       </main>
     </div>
   );

@@ -221,7 +221,7 @@ const Settings = () => {
       setAdmins(res?.data?.data?.documents);
       console.log("admins", res?.data?.data?.documents);
       console.log(res);
-      setNumberOfPages(res?.data?.data?.paginationResult?.numberOfPages);
+      setNumberOfPages(res?.data?.data?.pagination?.numberOfPages);
       setLoading(false);
     };
     fetchAdmins();

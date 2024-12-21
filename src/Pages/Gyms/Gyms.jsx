@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import airGym from "../../assetss/default/airGym.jpg";
 import "./Gyms.css";
-import { FloatingLabel, Form, Offcanvas } from "react-bootstrap";
+import { FloatingLabel, Form, Modal, Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { privateAxiosInstance } from "../../api/axios";
@@ -11,18 +10,32 @@ const Gyms = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const notify = () => toast.success("Invation sent successfully!");
   const navigate = useNavigate();
   const [gyms, setGyms] = useState([]);
+  const [gymsData, setGymsData] = useState();
+  const [keyWord, setKeyWord] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  console.log(keyWord);
   const getAllGyms = async () => {
     try {
-      const res = await privateAxiosInstance.get("/gyms");
+      let url = `gyms?page=${page}&limit=${limit}`;
+      if (keyWord) {
+        // eslint-disable-next-line no-const-assign
+        url += `&keyword=${encodeURIComponent(keyWord)}`;
+      }
+      const res = await privateAxiosInstance.get(url);
       console.log(res?.data?.data?.documents);
+      setGymsData(res?.data?.data);
       setGyms(res?.data?.data?.documents);
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    getAllGyms();
+  }, [keyWord, page, limit]);
   function formatReadableDate(isoTimestamp) {
     if (!isoTimestamp) return "Invalid date";
 
@@ -94,6 +107,10 @@ const Gyms = () => {
       setInviteLink(null);
     }, 2000);
   };
+  const pageArr = [];
+  for (let i = 0; i < gymsData?.pagination?.numberOfPages; i++) {
+    pageArr.push(i);
+  }
   return (
     <div className="gyms" style={{ minHeight: "100vh" }}>
       <div className="searchBar position-relative">
@@ -101,7 +118,12 @@ const Gyms = () => {
           <input
             type="text"
             className="inputSearch w-100 p-4 border-0"
-            placeholder="Search ..."
+            placeholder="Search by gym name ..."
+            value={keyWord}
+            onChange={(e) => {
+              setPage(1);
+              setKeyWord(e?.target?.value);
+            }}
           />
         </div>
         <div className="buttonOnSearch">
@@ -121,6 +143,7 @@ const Gyms = () => {
               <th>Plan</th>
               <th>Expire date</th>
               <th>Join date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -156,10 +179,65 @@ const Gyms = () => {
                 <td data-label="Join date">
                   {formatReadableDate(gym.joinDate)}
                 </td>
+                <td
+                  data-label="Actions"
+                  className="d-flex justify-content-end align-items-center"
+                >
+                  <button
+                    className="DangerButton"
+                    onClick={() => {
+                      setConfirmDelete(true);
+                    }}
+                  >
+                    Delete Gym
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <div className="d-flex justify-content-center align-items-center pagination my-2">
+          <div className="w-50 d-flex justify-content-between align-items-center">
+            <button
+              className={`PrimaryButtonTwo`}
+              style={{
+                cursor: gymsData?.pagination.prev ? "pointer" : "not-allowed",
+              }}
+              onClick={() => {
+                setPage(page - 1);
+              }}
+              disabled={!gymsData?.pagination.prev}
+            >
+              Previous
+            </button>
+            <div className="pages">
+              {pageArr.map((page) => {
+                return (
+                  <span
+                    className="mx-3 pag-item"
+                    onClick={() => {
+                      setPage(page + 1);
+                    }}
+                  >
+                    {page + 1}
+                  </span>
+                );
+              })}
+            </div>
+            <button
+              className={`PrimaryButtonTwo`}
+              style={{
+                cursor: gymsData?.pagination?.next ? "pointer" : "not-allowed",
+              }}
+              onClick={() => {
+                setPage(page + 1);
+              }}
+              disabled={!gymsData?.pagination?.next}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
       <div>
         <Offcanvas
@@ -259,7 +337,23 @@ const Gyms = () => {
           </Offcanvas.Body>
         </Offcanvas>
       </div>
-      <ToastContainer />
+      <div>
+        <Modal
+          show={confirmDelete}
+          onHide={() => setConfirmDelete(false)}
+          centered
+        >
+          <div className="modalOfLogout">
+            <Modal.Header closeButton id="modal">
+              <p>Are you sure you want to delete this gym ?</p>
+            </Modal.Header>
+            <Modal.Body className=" d-flex align-items-center justify-content-between">
+              <button className="PrimaryButton">Cancel</button>
+              <button className="DangerButton">Delete</button>
+            </Modal.Body>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };
