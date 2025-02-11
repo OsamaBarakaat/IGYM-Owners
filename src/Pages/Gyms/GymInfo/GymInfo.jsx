@@ -233,14 +233,8 @@ const GymInfo = () => {
               <div className="location">
                 <h3>Location</h3>
                 <div>
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.23655343019!2d30.94184382470436!3d29.972631021970244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14585658563d8c9d%3A0xf8037c015d1d48ec!2sAir%20Gym%20%26%20Spa!5e0!3m2!1sar!2seg!4v1710300431515!5m2!1sar!2seg"
-                    style={{ border: 0 }}
-                    title="map"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
+                  <p>lat: {theGym?.branchInfo?.location?.lat}</p>
+                  <p>lng: {theGym?.branchInfo?.location?.lng}</p>
                 </div>
               </div>
               <div className="plans">
@@ -284,13 +278,21 @@ const GymInfo = () => {
                             {dayInfo ? formatTime(dayInfo.closing) : "Closed"}
                           </td>
                           <td data-label="Peak hours">
-                            {dayInfo && dayInfo.peak
-                              ? formatTime(dayInfo.peak)
+                            {dayInfo && dayInfo.peakFrom
+                              ? formatTime(dayInfo.peakFrom)
+                              : "-"}{" "}
+                            -{" "}
+                            {dayInfo && dayInfo.peakTo
+                              ? formatTime(dayInfo.peakTo)
                               : "-"}
                           </td>
                           <td data-label="Female hours">
-                            {dayInfo && dayInfo.female
-                              ? formatTime(dayInfo.female)
+                            {dayInfo && dayInfo.femaleFrom
+                              ? formatTime(dayInfo.femaleFrom)
+                              : "-"}{" "}
+                            -{" "}
+                            {dayInfo && dayInfo.femaleTo
+                              ? formatTime(dayInfo.femaleTo)
                               : "-"}
                           </td>
                         </tr>

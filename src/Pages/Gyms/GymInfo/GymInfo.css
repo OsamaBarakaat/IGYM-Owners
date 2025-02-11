@@ -141,8 +141,7 @@
 
 .location {
     width: 60%;
-    overflow: auto;
-
+    overflow: hidden;
 }
 
 .plans {

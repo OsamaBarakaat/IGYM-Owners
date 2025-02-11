@@ -15,7 +15,7 @@ const Gyms = () => {
   const [gymsData, setGymsData] = useState();
   const [keyWord, setKeyWord] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [confirmDelete, setConfirmDelete] = useState(false);
   console.log(keyWord);
   const getAllGyms = async () => {
@@ -111,6 +111,24 @@ const Gyms = () => {
   for (let i = 0; i < gymsData?.pagination?.numberOfPages; i++) {
     pageArr.push(i);
   }
+
+  const [selectedGymId, setSelectedGymId] = useState(null);
+
+  const handleDelete = async () => {
+    try {
+      const { data } = await privateAxiosInstance.patch(
+        `gyms/${selectedGymId}/suspend`
+      );
+      console.log(data);
+      setConfirmDelete(false);
+      toast.success("Gym deleted successfully");
+      getAllGyms();
+      getAllPlans();
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
   return (
     <div className="gyms" style={{ minHeight: "100vh" }}>
       <div className="searchBar position-relative">
@@ -187,6 +205,7 @@ const Gyms = () => {
                     className="DangerButton"
                     onClick={() => {
                       setConfirmDelete(true);
+                      setSelectedGymId(gym._id);
                     }}
                   >
                     Delete Gym
@@ -349,7 +368,9 @@ const Gyms = () => {
             </Modal.Header>
             <Modal.Body className=" d-flex align-items-center justify-content-between">
               <button className="PrimaryButton">Cancel</button>
-              <button className="DangerButton">Delete</button>
+              <button className="DangerButton" onClick={handleDelete}>
+                Delete
+              </button>
             </Modal.Body>
           </div>
         </Modal>

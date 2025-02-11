@@ -47,7 +47,7 @@ const Trainers = (id) => {
               {trainers?.map((trainee, index) => (
                 <tr key={index}>
                   <td data-label="Name" className="tdOfImg ">
-                    <span>{trainee?.user.name}</span>
+                    <span>{trainee?.user?.name ?trainee?.user?.name : '' }</span>
                   </td>
                   <td data-label="Gender">{trainee?.user?.gender}</td>
                   <td data-label="Email">{trainee?.user?.email}</td>
