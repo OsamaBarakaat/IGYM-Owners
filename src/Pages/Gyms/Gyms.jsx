@@ -129,6 +129,25 @@ const Gyms = () => {
       toast.error("Something went wrong");
     }
   };
+
+  const [confirmUnSuspend, setConfirmUnSuspend] = useState(false);
+
+  const handleUnSuspend = async () => {
+    try {
+      const { data } = await privateAxiosInstance.put(`gyms/${selectedGymId}`, {
+        isSuspended: false,
+      });
+      console.log(data);
+      setConfirmUnSuspend(false);
+      toast.success("Gym un-suspended successfully");
+      getAllGyms();
+      getAllPlans();
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <div className="gyms" style={{ minHeight: "100vh" }}>
       <div className="searchBar position-relative">
@@ -201,15 +220,27 @@ const Gyms = () => {
                   data-label="Actions"
                   className="d-flex justify-content-end align-items-center"
                 >
-                  <button
-                    className="DangerButton"
-                    onClick={() => {
-                      setConfirmDelete(true);
-                      setSelectedGymId(gym._id);
-                    }}
-                  >
-                    Delete Gym
-                  </button>
+                  {gym.isSuspended ? (
+                    <button
+                      className="PrimaryButton"
+                      onClick={() => {
+                        setConfirmUnSuspend(true);
+                        setSelectedGymId(gym._id);
+                      }}
+                    >
+                      Un-Suspend Gym
+                    </button>
+                  ) : (
+                    <button
+                      className="DangerButton"
+                      onClick={() => {
+                        setConfirmDelete(true);
+                        setSelectedGymId(gym._id);
+                      }}
+                    >
+                      Suspend Gym
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -364,12 +395,36 @@ const Gyms = () => {
         >
           <div className="modalOfLogout">
             <Modal.Header closeButton id="modal">
-              <p>Are you sure you want to delete this gym ?</p>
+              <p>Are you sure you want to suspend this gym ?</p>
             </Modal.Header>
             <Modal.Body className=" d-flex align-items-center justify-content-between">
               <button className="PrimaryButton">Cancel</button>
               <button className="DangerButton" onClick={handleDelete}>
-                Delete
+                Suspend
+              </button>
+            </Modal.Body>
+          </div>
+        </Modal>
+      </div>
+      <div>
+        <Modal
+          show={confirmUnSuspend}
+          onHide={() => setConfirmUnSuspend(false)}
+          centered
+        >
+          <div className="modalOfLogout">
+            <Modal.Header closeButton id="modal">
+              <p>Are you sure you want to un-suspend this gym?</p>
+            </Modal.Header>
+            <Modal.Body className="d-flex align-items-center justify-content-between">
+              <button
+                className="PrimaryButton"
+                onClick={() => setConfirmUnSuspend(false)}
+              >
+                Cancel
+              </button>
+              <button className="SecondaryButton" onClick={handleUnSuspend}>
+                Un-Suspend
               </button>
             </Modal.Body>
           </div>

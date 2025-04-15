@@ -3,10 +3,14 @@ import "./Notifications.css";
 import avatar from "../../assetss/default/5856.jpg";
 import PushNotifications from "./PushNotifications/PushNotifications";
 import Heading from "../../components/Heading/Heading";
+import { privateAxiosInstance } from "../../api/axios";
 
 const Notifications = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -16,6 +20,25 @@ const Notifications = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
+  }, []);
+
+  const getAllNotifications = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await privateAxiosInstance.get(`/notifications`);
+      console.log(response);
+      setNotifications(response.data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch notifications. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllNotifications();
   }, []);
   return (
     <div className="GeneralSettingsOne" style={{ minHeight: "100vh" }}>
@@ -66,118 +89,27 @@ const Notifications = () => {
           <>
             {windowWidth > 1024 && <Heading content={"Notifications"} />}
             <div className="allNotifications bigCard my-3">
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
+              {notifications.map((notification) => (
+                <div key={notification.id} className="singleNotif">
+                  <div className="notifIcon">
+                    <div className="logo-small">
+                      <img src={avatar} alt="avatar" />
+                    </div>
+                  </div>
+                  <div className="notifContent flexcenterbetween">
+                    <div className="text-start">
+                      <p>{notification.title}</p>
+                      <p>{notification.message}</p>
+                    </div>
+                    <div>
+                      <small>{new Date(notification.createdAt).toLocaleDateString()}</small>
+                    </div>
                   </div>
                 </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>{" "}
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>{" "}
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>{" "}
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>{" "}
-              <div className="singleNotif">
-                <div className="notifIcon">
-                  <div className="logo-small">
-                    <img src={avatar} alt="avatar" />
-                  </div>
-                </div>
-                <div className="notifContent flexcenterbetween">
-                  <div className="text-start">
-                    <p>New Member</p>
-                    <p>John Doe has joined the group</p>
-                  </div>
-                  <div>
-                    <small>12/3/2024</small>
-                  </div>
-                </div>
-              </div>
+              ))}
+              {loading && <p>Loading...</p>}
+             
+            
             </div>
           </>
         )}
