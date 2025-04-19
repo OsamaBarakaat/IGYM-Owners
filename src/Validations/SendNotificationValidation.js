@@ -1,9 +1,12 @@
 import * as Yup from 'yup';
 
-export const SendNotificationValidation = Yup.object().shape({
-    email: Yup.string()
-        .email('Invalid email')
-        .required('Required'),
-    message: Yup.string()
-        .required('Required'),
+// For Single User (includes email validation)
+export const SendNotificationSingleValidation = Yup.object({
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    message: Yup.string().required('Message is required'),
+});
+
+// For All Users (only message validation)
+export const SendNotificationAllValidation = Yup.object({
+    message: Yup.string().required('Message is required'),
 });

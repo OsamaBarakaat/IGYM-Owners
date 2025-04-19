@@ -95,15 +95,17 @@ const Settings = () => {
 
   // get plans
   const [plans, setPlans] = useState([]);
+  const fetchPlans = async () => {
+    const res = await axiosPrivate.get("/owner-plans");
+    setPlans(res?.data?.data?.documents);
+    console.log("plans", res?.data?.data?.documents);
+    setLoading(false);
+  };
   useEffect(() => {
-    const fetchPlans = async () => {
-      const res = await axiosPrivate.get("/owner-plans");
-      setPlans(res?.data?.data?.documents);
-      console.log("plans", res?.data?.data?.documents);
-      setLoading(false);
-    };
     fetchPlans();
   }, []);
+
+  console.log("plans", plans);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   // Update editPlan form when selectedPlan changes
@@ -167,15 +169,15 @@ const Settings = () => {
   });
 
   //delete plan
-  const handleDeletePlan = async (id) => {
+  const handleDeletePlan = async (plan) => {
+    console.log(plan);
     try {
-      const res = await axiosPrivate.delete(`/owner-plans/${id}`);
+      const res = await axiosPrivate.delete(`/owner-plans/${plan?._id}`);
       console.log("res", res);
       toast.success("Plan deleted successfully");
-      const newPlans = plans.filter((plan) => {
-        return plan._id !== id;
-      });
-      setPlans(newPlans);
+
+      // refetch plans after delete
+      fetchPlans();
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
@@ -635,7 +637,7 @@ const Settings = () => {
                         <button
                           className="DangerButton w-100 m-2"
                           onClick={() => {
-                            handleDeletePlan(plan?._id);
+                            handleDeletePlan(plan);
                           }}
                         >
                           <span>

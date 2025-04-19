@@ -3,18 +3,19 @@
   background-color: var(--main-background-color);
   padding: 2rem;
   transition: all 0.5s ease;
-  overflow: hidden;
+  overflow: auto;
   color: var(--main-text-color);
   position: sticky;
   top: 0;
   left: 0;
   z-index: 1000;
   display: grid;
-  grid-template-rows: auto 1fr auto 1rem;
-  grid-template-areas: "logo" "sidebar-content" "collapseSideBar" ".";
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "logo" "sidebar-content" "collapseSideBar";
   border-right-width: 2px;
   border-right-style: solid;
   border-right-color: var(--main-border-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .logoOfSideBar {
@@ -36,7 +37,7 @@
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 1.5rem;
   transition: all 0.3s ease;
   font-size: 14px;
@@ -54,8 +55,6 @@
 }
 
 .collapseSideBar {
-  position: sticky;
-  bottom: 0;
   grid-area: collapseSideBar;
   display: flex;
   justify-content: center;
@@ -96,20 +95,24 @@
 /* -----  */
 .inactiveSideBar {
   transition: all 0.5s ease;
-  height: 100vh;
+  min-height: 100vh;
   background-color: var(--main-background-color);
-  padding: 2rem;
-  overflow: hidden;
+  padding: 1rem;
+  overflow: auto;
   position: sticky;
   top: 0;
   left: 0;
   display: grid;
-  grid-template-rows: auto 1fr auto 1rem;
-  grid-template-areas: "logo" "sidebar-content" "collapseSideBar" ".";
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "logo" "sidebar-content" "collapseSideBar";
   color: var(--main-text-color);
   border-right-width: 2px;
   border-right-style: solid;
   border-right-color: var(--main-border-color);
+
+  .flicker-text {
+    font-size: 16px !important;
+  }
 }
 
 .inactiveSideBar .ulOfSideBar li {
@@ -152,4 +155,40 @@
 .popoverBody>div:hover {
   cursor: pointer;
   background-color: #eee;
+}
+
+.logoSmall {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.flicker-text {
+  display: inline-block;
+  position: relative;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  max-width: 150px;
+}
+
+.flicker-text::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 0;
+  height: 2px;
+  background-color: #ffcc00;
+  transition: all 0.3s ease-out;
+  transform: translateX(-50%);
+}
+
+.flicker-text:hover::after {
+  width: 100%;
+}
+
+.noStyle {
+  text-decoration: none;
 }

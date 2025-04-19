@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import Heading from "../../../components/Heading/Heading";
 import "./PushNotifications.css";
 import { useFormik } from "formik";
-import { signinValidationSchema } from "../../../Validations/SigninValidation";
 import { FloatingLabel, Form } from "react-bootstrap";
-import { SendNotificationValidation } from "../../../Validations/SendNotificationValidation";
 import { toast } from "react-toastify";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { SendNotificationAllValidation, SendNotificationSingleValidation } from "../../../Validations/SendNotificationValidation";
 
 const PushNotifications = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,22 +25,47 @@ const PushNotifications = () => {
   const onSubmitSingle = async (values, actions) => {
     console.log(values);
     actions.setSubmitting(true);
-    toast.success("Notification sent to single user successfully");
-    setTimeout(() => {
-      actions.setSubmitting(false);
-    }, 1000);
-  };
-
-  const onSubmitAll = async (values, actions) => {
-    console.log(values);
     try {
-      actions.setSubmitting(true);
-      // Simulating an async action (e.g., API call)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Notification sent to all users successfully");
+      const response = await axiosPrivate.post("/push-gym-notifications", {
+        email: values.email,
+        message: values.message,
+        type: "private",
+      });
+      console.log("Notification sent successfully:", response.data);
+
+      toast.success("Notification sent to single user successfully");
+      setTimeout(() => {
+        actions.setSubmitting(false);
+      }, 1000);
     } catch (error) {
       console.error("Error sending notification:", error);
       toast.error("Error sending notification");
+    }
+  };
+
+  const onSubmitAll = async (values, actions) => {
+    console.log("Submitting to all users:", values);
+    actions.setSubmitting(true);
+    try {
+      const response = await axiosPrivate.post("/push-gym-notifications", {
+        message: values.message,
+        type: "public",
+      });
+      console.log("API Response:", response);
+      if (response.data && response.data.success) {
+        toast.success("Notification sent to all users successfully");
+      } else {
+        toast.error("Failed to send notification to all users");
+      }
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+      }
+      toast.error(
+        "Error sending notification: " + (error.message || "Unknown error")
+      );
     } finally {
       actions.setSubmitting(false);
     }
@@ -49,7 +76,7 @@ const PushNotifications = () => {
       email: "",
       message: "",
     },
-    validationSchema: SendNotificationValidation,
+    validationSchema: SendNotificationSingleValidation,
     onSubmit: onSubmitSingle,
   });
 
@@ -57,7 +84,7 @@ const PushNotifications = () => {
     initialValues: {
       message: "",
     },
-    validationSchema: SendNotificationValidation,
+    validationSchema: SendNotificationAllValidation,
     onSubmit: onSubmitAll,
   });
   return (

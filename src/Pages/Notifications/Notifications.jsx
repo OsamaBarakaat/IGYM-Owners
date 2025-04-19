@@ -4,6 +4,7 @@ import avatar from "../../assetss/default/5856.jpg";
 import PushNotifications from "./PushNotifications/PushNotifications";
 import Heading from "../../components/Heading/Heading";
 import { privateAxiosInstance } from "../../api/axios";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const Notifications = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,13 +23,14 @@ const Notifications = () => {
     };
   }, []);
 
+  const axiosPrivate = useAxiosPrivate();
   const getAllNotifications = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await privateAxiosInstance.get(`/notifications`);
+      const response = await axiosPrivate.get(`/notifications`);
       console.log(response);
-      setNotifications(response.data || []);
+      setNotifications(response.data.data || []);
     } catch (err) {
       console.error(err);
       setError("Failed to fetch notifications. Please try again later.");
@@ -102,14 +104,14 @@ const Notifications = () => {
                       <p>{notification.message}</p>
                     </div>
                     <div>
-                      <small>{new Date(notification.createdAt).toLocaleDateString()}</small>
+                      <small>
+                        {new Date(notification.createdAt).toLocaleDateString()}
+                      </small>
                     </div>
                   </div>
                 </div>
               ))}
               {loading && <p>Loading...</p>}
-             
-            
             </div>
           </>
         )}
