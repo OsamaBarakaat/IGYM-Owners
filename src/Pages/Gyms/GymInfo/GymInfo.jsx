@@ -11,11 +11,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Modal, Dropdown, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { privateAxiosInstance } from "../../../api/axios";
 import Trainees from "./Trainees";
 import Trainers from "./Trainers";
 import Plans from "./Plans";
 import Classes from "./Classes";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { toast } from "react-toastify";
 
 const GymInfo = () => {
   const { id } = useParams();
@@ -27,6 +28,7 @@ const GymInfo = () => {
   const showClasses = () => setCurrentPage("classes");
   const [showImage, setShowImage] = useState(false);
   const [expandedImage, setExpandedImage] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
   const images = [
     airGym,
     equipment,
@@ -42,10 +44,11 @@ const GymInfo = () => {
   const [showSuspendModal, setShowSuspendModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+   const [confirmUnSuspend, setConfirmUnSuspend] = useState(false);
 
   const getTheGym = async () => {
     try {
-      const res = await privateAxiosInstance.get(`/gyms/${id}`);
+      const res = await axiosPrivate.get(`/gyms/${id}`);
       console.log(res?.data?.data);
       setTheGym(res?.data?.data);
     } catch (error) {
@@ -55,7 +58,7 @@ const GymInfo = () => {
 
   const handleSuspendGym = async () => {
     try {
-      const res = await privateAxiosInstance.patch(`/gyms/${id}/suspend`);
+      const res = await axiosPrivate.patch(`/gyms/${id}/suspend`);
       console.log("Gym suspended:", res?.data);
       setShowSuspendModal(false);
       getTheGym(); // Refresh gym data
@@ -64,9 +67,36 @@ const GymInfo = () => {
     }
   };
 
-  const handleSendNotification = () => {
+  const handleSendNotification = async () => {
     console.log("Notification message:", notificationMessage);
-    setShowNotificationModal(false);
+    try {
+      const response = await axiosPrivate.post("/push-gym-notifications", {
+        email: theGym.email,
+        message: notificationMessage.message,
+        type: "private",
+      });
+      console.log("Notification sent successfully:", response.data);
+      toast.success("Notification sent to single user successfully");
+      setShowNotificationModal(false);
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      toast.error("Error sending notification");
+      setShowNotificationModal(false);
+    }
+  };
+
+  const handleUnSuspend = async () => {
+    try {
+      const { data } = await axiosPrivate.put(`gyms/${id}`, {
+        isSuspended: false,
+      });
+      console.log(data);
+      toast.success("Gym un-suspended successfully");
+      getTheGym(); // Refresh gym data
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
 
   const handleImageClick = (image) => {
@@ -139,9 +169,15 @@ const GymInfo = () => {
                 </svg>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => setShowSuspendModal(true)}>
-                  Suspend Gym
-                </Dropdown.Item>
+                {theGym?.isSuspended ? (
+                  <Dropdown.Item onClick={() => setConfirmUnSuspend(true)}>
+                    Un-Suspend Gym
+                  </Dropdown.Item>
+                ) : (
+                  <Dropdown.Item onClick={() => setShowSuspendModal(true)}>
+                    Suspend Gym
+                  </Dropdown.Item>
+                )}
                 <Dropdown.Item onClick={() => setShowNotificationModal(true)}>
                   Send Notification
                 </Dropdown.Item>
@@ -443,11 +479,12 @@ const GymInfo = () => {
         <Modal.Header closeButton>
           <Modal.Title>Confirm Suspension</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to suspend this gym?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to suspend this gym?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowSuspendModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowSuspendModal(false)}
+          >
             Cancel
           </Button>
           <Button variant="danger" onClick={handleSuspendGym}>
@@ -455,7 +492,30 @@ const GymInfo = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
+      <div>
+        <Modal
+          show={confirmUnSuspend}
+          onHide={() => setConfirmUnSuspend(false)}
+          centered
+        >
+          <div className="modalOfLogout">
+            <Modal.Header closeButton id="modal">
+              <p>Are you sure you want to un-suspend this gym?</p>
+            </Modal.Header>
+            <Modal.Body className="d-flex align-items-center justify-content-between">
+              <button
+                className="PrimaryButton"
+                onClick={() => setConfirmUnSuspend(false)}
+              >
+                Cancel
+              </button>
+              <button className="SecondaryButton" onClick={handleUnSuspend}>
+                Un-Suspend
+              </button>
+            </Modal.Body>
+          </div>
+        </Modal>
+      </div>
       {/* Send Notification Modal */}
       <Modal
         show={showNotificationModal}
