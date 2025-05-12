@@ -44,7 +44,7 @@ const GymInfo = () => {
   const [showSuspendModal, setShowSuspendModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
-   const [confirmUnSuspend, setConfirmUnSuspend] = useState(false);
+  const [confirmUnSuspend, setConfirmUnSuspend] = useState(false);
 
   const getTheGym = async () => {
     try {
@@ -58,7 +58,9 @@ const GymInfo = () => {
 
   const handleSuspendGym = async () => {
     try {
-      const res = await axiosPrivate.patch(`/gyms/${id}/suspend`);
+      const res = await axiosPrivate.patch(`/gyms/${id}/suspend`, {
+        isSuspended: true,
+      });
       console.log("Gym suspended:", res?.data);
       setShowSuspendModal(false);
       getTheGym(); // Refresh gym data

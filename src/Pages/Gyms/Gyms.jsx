@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./Gyms.css";
 import { FloatingLabel, Form, Modal, Offcanvas } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { privateAxiosInstance } from "../../api/axios";
+import { toast } from "react-toastify";
 import { useFormik } from "formik";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const Gyms = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   const [gyms, setGyms] = useState([]);
   const [gymsData, setGymsData] = useState();
   const [keyWord, setKeyWord] = useState(null);
@@ -25,7 +26,7 @@ const Gyms = () => {
         // eslint-disable-next-line no-const-assign
         url += `&keyword=${encodeURIComponent(keyWord)}`;
       }
-      const res = await privateAxiosInstance.get(url);
+      const res = await axiosPrivate.get(url);
       console.log(res?.data?.data?.documents);
       setGymsData(res?.data?.data);
       setGyms(res?.data?.data?.documents);
@@ -57,7 +58,7 @@ const Gyms = () => {
   const [plans, setPlans] = useState([]);
   const getAllPlans = async () => {
     try {
-      const res = await privateAxiosInstance.get("/owner-plans");
+      const res = await axiosPrivate.get("/owner-plans");
       console.log(res?.data?.data?.documents);
       setPlans(res?.data?.data?.documents);
     } catch (error) {
@@ -71,7 +72,7 @@ const Gyms = () => {
   }, []);
   const handleSendInvite = async (values, actions) => {
     try {
-      const { data } = await privateAxiosInstance.post(`gyms`, {
+      const { data } = await axiosPrivate.post(`gyms`, {
         email: values.email,
         planId: values.planName,
         clientUrl: "https://igym.vercel.app/setpass/",
@@ -116,12 +117,15 @@ const Gyms = () => {
 
   const handleDelete = async () => {
     try {
-      const { data } = await privateAxiosInstance.patch(
-        `gyms/${selectedGymId}/suspend`
+      const { data } = await axiosPrivate.patch(
+        `gyms/${selectedGymId}/suspend`,
+        {
+          isSuspended: true,
+        }
       );
       console.log(data);
       setConfirmDelete(false);
-      toast.success("Gym deleted successfully");
+      toast.success("Gym Suspended successfully");
       getAllGyms();
       getAllPlans();
     } catch (error) {
@@ -134,7 +138,7 @@ const Gyms = () => {
 
   const handleUnSuspend = async () => {
     try {
-      const { data } = await privateAxiosInstance.put(`gyms/${selectedGymId}`, {
+      const { data } = await axiosPrivate.put(`gyms/${selectedGymId}`, {
         isSuspended: false,
       });
       console.log(data);
