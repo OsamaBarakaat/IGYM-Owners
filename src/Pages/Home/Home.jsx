@@ -1,12 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import { Chart as ChartJs } from "chart.js/auto";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import sourceData from "../../data/data.json";
 import revenue from "../../data/revenue.json";
 import Heading from "../../components/Heading/Heading";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const Home = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const [gymStats, setGymStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchGymStats = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosPrivate.get(
+        `/gyms/66076924de3d68c1cd117087/stats`
+      );
+      setGymStats(response.data.data);
+
+      console.log("Gym Statistics:", response.data.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch gym statistics. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGymStats();
+  }, []);
   return (
     <div className="Home">
       <Heading content="Home " />
