@@ -138,7 +138,8 @@ const Gyms = () => {
 
   const handleUnSuspend = async () => {
     try {
-      const { data } = await axiosPrivate.put(`gyms/${selectedGymId}`, {
+      const { data } = await axiosPrivate.patch(
+        `gyms/${selectedGymId}/suspend`,{
         isSuspended: false,
       });
       console.log(data);
