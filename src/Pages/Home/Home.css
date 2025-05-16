@@ -194,14 +194,23 @@
 }
 
 .twoSmallChart {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin: 1rem auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas: "chart1 chart2";
+    grid-gap: 1rem;
+    margin: 1rem;
+}
+
+.smallChartOne {
+    grid-area: chart1;
+}
+
+.smallChartTwo {
+    grid-area: chart2;
 }
 
 .twoSmallChart>div {
-    width: calc(100%/2 - 2rem);
+    /* width: calc(100%/3 - 2rem); */
     padding: 1rem;
     border-radius: 0.5rem;
     background-color: var(--main-background-color);
@@ -209,19 +218,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 50vh;
 }
 
 
 
 @media screen and (max-width:768px) {
     .twoSmallChart {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: 2fr;
+        grid-template-areas: "chart1" "chart2";
     }
 
-    .twoSmallChart div {
-        width: calc(100% - 2rem);
-        margin: 1rem 0;
-    }
+
 
 }
 

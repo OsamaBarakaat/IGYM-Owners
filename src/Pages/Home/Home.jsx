@@ -6,6 +6,7 @@ import sourceData from "../../data/data.json";
 import revenue from "../../data/revenue.json";
 import Heading from "../../components/Heading/Heading";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Loader from "../../components/Loader/Loader";
 
 const Home = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -17,9 +18,7 @@ const Home = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosPrivate.get(
-        `/gyms/66076924de3d68c1cd117087/stats`
-      );
+      const response = await axiosPrivate.get(`/admins/stats`);
       setGymStats(response.data.data);
 
       console.log("Gym Statistics:", response.data.data);
@@ -34,6 +33,14 @@ const Home = () => {
   useEffect(() => {
     fetchGymStats();
   }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
   return (
     <div className="Home">
       <Heading content="Home " />
@@ -57,7 +64,7 @@ const Home = () => {
           </div>
           <div>
             <p>Earnings</p>
-            <h3>$1000</h3>
+            <h3>{gymStats?.totalIncome}</h3>
           </div>
         </div>
         <div className="defaultCard ">
@@ -75,8 +82,8 @@ const Home = () => {
             </svg>
           </div>
           <div>
-            <p>Spend this month</p>
-            <h3>$1000</h3>
+            <p>total Users</p>
+            <h3>{gymStats?.users}</h3>
           </div>
         </div>
         <div className="defaultCard ">
@@ -96,8 +103,8 @@ const Home = () => {
             </svg>
           </div>
           <div>
-            <p>Sales</p>
-            <h3>$1000</h3>
+            <p>Active Plans</p>
+            <h3>{gymStats?.plans}</h3>
           </div>
         </div>
         <div className="defaultCard ">
@@ -114,13 +121,13 @@ const Home = () => {
             </svg>
           </div>
           <div>
-            <p>New Gyms</p>
-            <h3>120</h3>
+            <p>Total Gyms</p>
+            <h3>{gymStats?.gyms}</h3>
           </div>
         </div>
       </div>
       <div className="main-charts">
-        <div className="bigChart">
+        {/* <div className="bigChart">
           <Line
             data={{
               labels: revenue.map((item) => item.label),
@@ -148,32 +155,35 @@ const Home = () => {
               ],
             }}
           />
-        </div>
+        </div> */}
         <div className="twoSmallChart">
           <div className="smallChartOne">
             <Bar
               data={{
-                labels: sourceData.map((item) => item.label),
+                labels: [
+                  "Jan",
+                  "Feb",
+                  "Mar",
+                  "Apr",
+                  "May",
+                  "Jun",
+                  "Jul",
+                  "Aug",
+                  "Sep",
+                  "Oct",
+                  "Nov",
+                  "Dec",
+                ],
                 datasets: [
                   {
-                    label: "Sales",
-                    data: sourceData.map((item) => item.sales),
+                    label: "Gyms on the Year",
+                    data: gymStats?.gymCountsByMonth,
                     backgroundColor: "rgba(255, 99, 132, 0.2)",
                     borderColor: "rgba(255, 99, 132, 1)",
                     hoverBackgroundColor: "rgb(159, 235, 7)",
                     hoverBorderColor: "rgb(159, 235, 7)",
                     borderWidth: 2,
-                    borderRadius: 2,
-                  },
-                  {
-                    label: "Earnings",
-                    data: sourceData.map((item) => item.earning),
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    borderColor: "rgba(54, 162, 235, 1)",
-                    hoverBackgroundColor: "rgb(159, 235, 7)",
-                    hoverBorderColor: "rgb(159, 235, 7)",
-                    borderWidth: 2,
-                    borderRadius: 2,
+                    borderRadius: 4,
                   },
                 ],
               }}
@@ -183,11 +193,11 @@ const Home = () => {
             <div>
               <Doughnut
                 data={{
-                  labels: ["new members", "old members", "active members"],
+                  labels: gymStats?.topPlans.map((item) => item?.name),
                   datasets: [
                     {
-                      label: "count",
-                      data: [100, 200, 300],
+                      label: "Gyms included in the plan",
+                      data: gymStats?.topPlans.map((item) => item?.count),
                       backgroundColor: [
                         "rgb(33, 150, 83)",
                         "rgb(211, 64, 83)",
