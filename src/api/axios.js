@@ -1,9 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = process.env.BASE_URL;
+// const BASE_URL = "https://gym-api-d2a5.onrender.com";
+// const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://api.igymsystem.com";
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api.igymsystem.com',
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -11,7 +13,7 @@ const axiosInstance = axios.create({
 });
 
 export const privateAxiosInstance = axios.create({
-  baseURL: 'https://api.igymsystem.com',
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },

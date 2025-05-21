@@ -6,7 +6,7 @@ import Heading from "../../components/Heading/Heading";
 import { privateAxiosInstance } from "../../api/axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const Notifications = () => {
+const Notifications = ({ socket }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [notifications, setNotifications] = useState([]);
@@ -41,6 +41,14 @@ const Notifications = () => {
 
   useEffect(() => {
     getAllNotifications();
+    socket.on("refetch admin notification", () => {
+      console.log("refetch notification");
+      getAllNotifications();
+    });
+
+    return () => {
+      socket.off("refetch admin notification");
+    };
   }, []);
   return (
     <div className="GeneralSettingsOne" style={{ minHeight: "100vh" }}>
